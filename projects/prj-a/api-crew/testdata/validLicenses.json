@@ -1,0 +1,23 @@
+[
+  {
+    "id": "TC01",
+    "description": "crew member with valid licenses returns them",
+    "pathParams": { "crewId": "C1001" },
+    "expectedStatus": 200,
+    "expectFields": { "crewId": "C1001", "licenses[0].status": "VALID" },
+    "tags": ["smoke"]
+  },
+  {
+    "id": "TC02",
+    "description": "crew member without licenses returns an empty list",
+    "pathParams": { "crewId": "C2002" },
+    "expectedStatus": 200,
+    "expectFields": { "licenses": [] }
+  },
+  {
+    "id": "TC03",
+    "description": "unknown crew member returns 404",
+    "pathParams": { "crewId": "C9999" },
+    "expectedStatus": 404
+  }
+]

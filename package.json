@@ -1,0 +1,26 @@
+{
+  "name": "api-integration-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API integration testing: V1 vs V2 comparison during migration, V2 regression afterwards",
+  "scripts": {
+    "test:compare": "playwright test --project=comparison",
+    "test:regression": "playwright test --project=regression",
+    "test:selfcheck": "playwright test --project=selfcheck",
+    "record:baselines": "cross-env RECORD_BASELINE=true playwright test --project=comparison",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.0.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.20.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.24.0"
+  }
+}

@@ -1,0 +1,65 @@
+# Runs API tests for one environment, one mode and one scope (all, a project, or one API).
+# The agent must reach the APIs: use a self hosted agent pool if they are internal.
+
+trigger: none
+
+parameters:
+  - name: environment
+    displayName: Environment
+    type: string
+    default: dev
+    values: [dev, test, uat]
+  - name: mode
+    displayName: Mode
+    type: string
+    default: comparison
+    values: [comparison, regression]
+  - name: scope
+    displayName: Scope (projects, projects/prj-a or projects/prj-a/api-crew)
+    type: string
+    default: projects/prj-a
+  - name: filter
+    displayName: Filter by title or tag (e.g. @smoke), or "all"
+    type: string
+    default: all
+
+variables:
+  # One variable group per environment with the variables named in project.config.ts
+  # (PRJA_V1_URL, PRJA_V2_URL, ...). Mark secrets as secret and map them below.
+  - group: api-tests-${{ parameters.environment }}
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: Use Node 20
+
+  - script: npm ci
+    displayName: Install dependencies
+
+  - script: npx playwright test ${{ parameters.scope }} --project=${{ parameters.mode }}
+    displayName: Run ${{ parameters.mode }} (${{ parameters.environment }}, ${{ parameters.scope }})
+    env:
+      CI: 'true'
+      TEST_ENV: ${{ parameters.environment }}
+      TEST_FILTER: ${{ parameters.filter }}
+      # Secret variables are not visible to scripts unless mapped here, e.g.:
+      # AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: reports/**/junit/results.xml
+      testRunTitle: API ${{ parameters.mode }} (${{ parameters.environment }}, ${{ parameters.scope }})
+    displayName: Publish test results
+
+  - task: PublishPipelineArtifact@1
+    condition: always()
+    inputs:
+      targetPath: reports
+      artifact: report-${{ parameters.mode }}-${{ parameters.environment }}-$(System.JobAttempt)
+    displayName: Publish HTML report

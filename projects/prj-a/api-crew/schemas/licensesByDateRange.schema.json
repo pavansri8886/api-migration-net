@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["crewId", "licenses"],
+  "properties": {
+    "crewId": { "type": "string" },
+    "licenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["licenseNumber", "type", "status", "validUntil"],
+        "properties": {
+          "licenseNumber": { "type": "string" },
+          "type": { "type": "string" },
+          "status": { "type": "string", "enum": ["VALID", "EXPIRED", "SUSPENDED"] },
+          "validUntil": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}

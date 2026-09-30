@@ -1,0 +1,32 @@
+[
+  {
+    "id": "TC01",
+    "description": "valid date range returns licenses in that range",
+    "pathParams": { "crewId": "C1001" },
+    "query": { "fromDate": "2026-01-01", "toDate": "2026-12-31" },
+    "expectedStatus": 200,
+    "tags": ["smoke"]
+  },
+  {
+    "id": "TC02",
+    "description": "fromDate after toDate is rejected",
+    "pathParams": { "crewId": "C1001" },
+    "query": { "fromDate": "2026-12-31", "toDate": "2026-01-01" },
+    "expectedStatus": 400
+  },
+  {
+    "id": "TC03",
+    "description": "missing toDate is rejected",
+    "pathParams": { "crewId": "C1001" },
+    "query": { "fromDate": "2026-01-01" },
+    "expectedStatus": 400
+  },
+  {
+    "id": "TC04",
+    "description": "range with no licenses returns an empty list",
+    "pathParams": { "crewId": "C1001" },
+    "query": { "fromDate": "2000-01-01", "toDate": "2000-12-31" },
+    "expectedStatus": 200,
+    "expectFields": { "licenses": [] }
+  }
+]
